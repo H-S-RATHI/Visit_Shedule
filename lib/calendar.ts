@@ -1,4 +1,4 @@
-import { TEAMS } from "./teams"
+import { TEAMS, HOLIDAY_TEAM } from "./teams"
 import { defaultCycleStartDate } from "@/config/rotation"
 import type { CalendarDay, CalendarResponse, MonthMeta, Team } from "./types"
 
@@ -34,13 +34,15 @@ export interface ComputeTeamResult {
 }
 
 /**
- * Rotation algorithm (documented):
- * - teams = [T0..T4] in order
+ * Rotation algorithm (updated for weekdays only):
+ * - teams = [T0..T4] for weekdays only (Mon-Fri)
+ * - weekends (Sat-Sun) = Holiday/No Visit
  * - startDate = configurable cycle start date (default Monday 2025-09-29)
  * - daysSinceStart = floor((d - startDate) / dayMs)
  * - weekIndex = floor(daysSinceStart / 7)
  * - weekdayIndex = ISO weekday 0..6 (0=Mon, 6=Sun)
- * - teamIndex = (weekdayIndex + weekIndex) % teams.length
+ * - if weekend (Sat=5, Sun=6): return HOLIDAY_TEAM
+ * - if weekday (0-4): teamIndex = (weekdayIndex + weekIndex) % teams.length
  * - assigned team = teams[teamIndex]
  */
 export function computeTeamForDate(
@@ -49,11 +51,20 @@ export function computeTeamForDate(
   teams: Team[] = TEAMS,
 ): ComputeTeamResult {
   const d = toUtcDate(date)
+  const weekdayIndex = getIsoWeekdayIndex(d)
+  
+  // Check if it's weekend (Saturday=5, Sunday=6)
+  if (weekdayIndex === 5 || weekdayIndex === 6) {
+    return { team: HOLIDAY_TEAM, teamIndex: -1 }
+  }
+  
+  // For weekdays (0-4), calculate team rotation
   const start = parseIsoToUtc(startDateStr)
   const dayMs = 24 * 60 * 60 * 1000
   const daysSinceStart = Math.floor((d.getTime() - start.getTime()) / dayMs)
   const weekIndex = Math.floor(daysSinceStart / 7)
-  const weekdayIndex = getIsoWeekdayIndex(d)
+  
+  // Only assign teams to weekdays (0-4), so we have 5 teams for 5 weekdays
   const teamIndex = (((weekdayIndex + weekIndex) % teams.length) + teams.length) % teams.length
   return { team: teams[teamIndex], teamIndex }
 }

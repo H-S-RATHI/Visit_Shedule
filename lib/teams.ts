@@ -33,3 +33,11 @@ export const TEAMS: Team[] = [
     shortName: "DineshBhatt-Daksh",
   },
 ]
+
+// Special team for weekends (Saturday & Sunday)
+export const HOLIDAY_TEAM: Team = {
+  id: -1,
+  name: "No Visit",
+  members: ["Weekend Holiday"],
+  shortName: "Holiday",
+}

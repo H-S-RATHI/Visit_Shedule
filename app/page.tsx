@@ -83,27 +83,37 @@ export default function HomePage() {
           <DialogHeader>
             <DialogTitle>
               {selected
-                ? `Site Visit Team — ${new Date(selected.date).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
+                ? `${selected.team === "No Visit" ? "Weekend Holiday" : "Site Visit Team"} — ${new Date(selected.date).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
                 : "Site Visit Team"}
             </DialogTitle>
             <DialogDescription id="team-details">
               {selected ? (
-                <div className="mt-2 space-y-2">
-                  <p className="font-medium break-words">{selected.team.replace(' - ', ' ')}</p>
-                  <div className="text-sm text-muted-foreground">
-                    <p className="font-medium mb-1">Site Visit Representatives:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {selected.members.map((member, index) => (
-                        <span
-                          key={index}
-                          className="inline-block bg-muted px-2 py-1 rounded-md text-xs break-all"
-                        >
-                          {member}
-                        </span>
-                      ))}
+                selected.team === "No Visit" ? (
+                  <div className="mt-2 space-y-2 text-center">
+                    <div className="text-6xl mb-4">🏠</div>
+                    <p className="font-medium text-lg">Weekend Holiday</p>
+                    <p className="text-sm text-muted-foreground">
+                      No site visits are scheduled on weekends. Our property sales team takes weekends off to rest and recharge.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-2 space-y-2">
+                    <p className="font-medium break-words">{selected.team.replace(' - ', ' ')}</p>
+                    <div className="text-sm text-muted-foreground">
+                      <p className="font-medium mb-1">Site Visit Representatives:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {selected.members.map((member, index) => (
+                          <span
+                            key={index}
+                            className="inline-block bg-muted px-2 py-1 rounded-md text-xs break-all"
+                          >
+                            {member}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )
               ) : null}
             </DialogDescription>
           </DialogHeader>

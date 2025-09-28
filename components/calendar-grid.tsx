@@ -37,18 +37,32 @@ export function CalendarGrid({ year, month, days, onSelectDay }: Props) {
         ))}
         {days.map((d) => {
           const dayNum = Number(d.date.split("-")[2])
+          const isHoliday = d.team === "No Visit"
+          const displayTeam = d.team.replace(' - ', ' ')
+          
           return (
             <button
               key={d.date}
               onClick={() => onSelectDay(d)}
-              className="p-2 sm:p-3 rounded-md border text-left focus:outline-none focus:ring-2 focus:ring-ring min-h-[5rem] sm:min-h-[6rem] overflow-hidden flex flex-col"
-              aria-label={`Day ${dayNum}, site visit team ${d.team.replace(' - ', ' ')}`}
+              className={`p-2 sm:p-3 rounded-md border text-left focus:outline-none focus:ring-2 focus:ring-ring min-h-[5rem] sm:min-h-[6rem] overflow-hidden flex flex-col ${
+                isHoliday 
+                  ? 'bg-muted/30 border-muted text-muted-foreground' 
+                  : 'bg-background hover:bg-accent/50'
+              }`}
+              aria-label={`Day ${dayNum}, ${isHoliday ? 'holiday - no site visits' : `site visit team ${displayTeam}`}`}
             >
               <div className="flex items-center justify-between mb-1 w-full">
                 <span className="text-sm font-medium">{dayNum}</span>
+                {isHoliday && (
+                  <span className="text-xs text-muted-foreground">🏠</span>
+                )}
               </div>
-              <div className="text-[9px] text-muted-foreground leading-snug flex-1 overflow-hidden break-words">
-                {d.team.replace(' - ', ' ')}
+              <div className={`text-[9px] leading-snug flex-1 overflow-hidden break-words ${
+                isHoliday 
+                  ? 'text-muted-foreground font-medium text-center flex items-center justify-center' 
+                  : 'text-muted-foreground'
+              }`}>
+                {isHoliday ? 'Holiday' : displayTeam}
               </div>
             </button>
           )
