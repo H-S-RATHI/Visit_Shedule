@@ -28,7 +28,7 @@ export const TEAMS: Team[] = [
   },
   {
     id: 4,
-    name: "Dinesh Bhatt - Daksh",
+    name: "Dinesh - Daksh",
     members: ["Dinesh", "Daksh"],
     shortName: "Dinesh-Daksh",
   },
